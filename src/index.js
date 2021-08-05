@@ -32,15 +32,17 @@ export default class PCancelable {
 			this._reject = reject;
 
 			const onResolve = value => {
-				if (!this._isCanceled || !onCancel.shouldReject) {
+				if (!this._isCanceled) {
 					this._isPending = false;
 					resolve(value);
 				}
 			};
 
 			const onReject = error => {
-				this._isPending = false;
-				reject(error);
+                if (!this._isCanceled) {
+                    this._isPending = false;
+                    reject(error);
+                }
 			};
 
 			const onCancel = handler => {

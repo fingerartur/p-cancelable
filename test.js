@@ -1,6 +1,6 @@
 import test from 'ava';
 import delay from 'delay';
-import PCancelable, {CancelError} from './index.js';
+import PCancelable, {CancelError} from './src/index.js';
 
 const fixture = Symbol('fixture');
 
@@ -201,24 +201,38 @@ test('custom reason', async t => {
 	await t.throwsAsync(cancelablePromise, {message: 'unicorn'});
 });
 
-test('prevent rejection', async t => {
+test('prevent rejection, cancel and resolve - should never finalize', async t => {
 	const cancelablePromise = new PCancelable((resolve, reject, onCancel) => {
 		onCancel.shouldReject = false;
 		setTimeout(resolve, 100);
 	});
 
 	cancelablePromise.cancel();
-	await t.notThrowsAsync(cancelablePromise);
+
+    cancelablePromise.finally(() => {
+        t.fail("Promise finalized and it should not have")
+    })
+
+    await delay(200);
+
+    t.pass('Promise never finalized')
 });
 
-test('prevent rejection and reject later', async t => {
+test('prevent rejection, cancel and reject - should never finalize', async t => {
 	const cancelablePromise = new PCancelable((resolve, reject, onCancel) => {
 		onCancel.shouldReject = false;
 		setTimeout(() => reject(new Error('unicorn')), 100);
 	});
 
 	cancelablePromise.cancel();
-	await t.throwsAsync(cancelablePromise, {message: 'unicorn'});
+
+    cancelablePromise.finally(() => {
+        t.fail("Promise finalized and it should not have")
+    })
+
+    await delay(200);
+
+    t.pass('Promise never finalized')
 });
 
 test('prevent rejection and resolve later', async t => {

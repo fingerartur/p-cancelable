@@ -81,15 +81,17 @@ var PCancelable = /*#__PURE__*/function () {
       _this2._reject = reject;
 
       var onResolve = function onResolve(value) {
-        if (!_this2._isCanceled || !onCancel.shouldReject) {
+        if (!_this2._isCanceled) {
           _this2._isPending = false;
           resolve(value);
         }
       };
 
       var onReject = function onReject(error) {
-        _this2._isPending = false;
-        reject(error);
+        if (!_this2._isCanceled) {
+          _this2._isPending = false;
+          reject(error);
+        }
       };
 
       var onCancel = function onCancel(handler) {
