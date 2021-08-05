@@ -9,18 +9,15 @@
 		"email": "sindresorhus@gmail.com",
 		"url": "https://sindresorhus.com"
 	},
-	"type": "module",
-	"exports": "./index.js",
-	"engines": {
-		"node": ">=12.20"
-	},
+    "type": "module",
+	"main": "./dist/index.js",
 	"scripts": {
+		"build": "rm -rf ./dist && babel ./src/index.js -d ./dist && cp ./src/index.d.ts ./dist/index.d.ts",
 		"test": "xo && ava && tsd"
 	},
-	"files": [
-		"index.js",
-		"index.d.ts"
-	],
+    "files": [
+        "dist"
+    ],
 	"keywords": [
 		"promise",
 		"cancelable",
@@ -42,6 +39,9 @@
 		"bluebird"
 	],
 	"devDependencies": {
+		"@babel/cli": "^7.14.8",
+		"@babel/core": "^7.15.0",
+		"@babel/preset-env": "^7.15.0",
 		"ava": "^3.15.0",
 		"delay": "^5.0.0",
 		"tsd": "^0.16.0",
